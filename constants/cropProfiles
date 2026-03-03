@@ -1,0 +1,38 @@
+export type CropProfile = {
+  crop: string;
+  tempRange: string;
+  humidityRange: string;
+  lifespan: string;
+  lossReduction: string;
+};
+
+export const cropProfiles: CropProfile[] = [
+  {
+    crop: "Maize",
+    tempRange: "15–18°C",
+    humidityRange: "50–60%",
+    lifespan: "6–9 months",
+    lossReduction: "Up to 70%",
+  },
+  {
+    crop: "Beans",
+    tempRange: "14–18°C",
+    humidityRange: "45–55%",
+    lifespan: "8–12 months",
+    lossReduction: "Up to 65%",
+  },
+  {
+    crop: "Rice",
+    tempRange: "15–20°C",
+    humidityRange: "50–60%",
+    lifespan: "12+ months",
+    lossReduction: "Up to 60%",
+  },
+  {
+    crop: "Irish Potatoes",
+    tempRange: "4–7°C",
+    humidityRange: "90–95%",
+    lifespan: "2–4 months",
+    lossReduction: "Up to 55%",
+  },
+];

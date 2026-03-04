@@ -37,7 +37,7 @@ export default function LoginSetupScreen() {
           placeholder="Setup or Container ID"
           autoCapitalize="characters"
           className="mt-6 rounded-2xl border border-sand bg-white px-4 py-3 text-cocoa text-center"
-          placeholderTextColor="#A67C63"
+          placeholderTextColor="#6B7280"
         />
 
         {error ? (

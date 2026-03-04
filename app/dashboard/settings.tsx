@@ -21,14 +21,14 @@ function SettingItem({ icon, title, subtitle, route }: SettingItemProps) {
     >
       <View className="mr-2 flex-1 flex-row items-center">
         <View className="mr-3 rounded-xl bg-cream p-2">
-          <Ionicons name={icon} size={18} color="#4A2E21" />
+          <Ionicons name={icon} size={18} color="#2C2830" />
         </View>
         <View className="flex-1">
           <Text className="text-base font-bold text-cocoa">{title}</Text>
           <Text className="mt-1 text-xs text-mocha">{subtitle}</Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={18} color="#A67C63" />
+      <Ionicons name="chevron-forward" size={18} color="#6B7280" />
     </TouchableOpacity>
   );
 }
@@ -39,7 +39,7 @@ export default function SettingsScreen() {
       <ScreenMotion>
       <ScrollView className="flex-1 bg-cream px-5 pt-8" contentContainerStyle={{ paddingBottom: 34 }}>
         <Text className="text-2xl font-black text-cocoa">Settings</Text>
-        <Text className="mt-1 text-sm text-accent">Deployment, sensors, notifications, and system controls</Text>
+        <Text className="mt-1 text-sm text-accent">Module, sensors, notifications, and system controls</Text>
 
         <Text className="mb-2 mt-6 text-xs font-bold tracking-wide text-mocha">ACCOUNT</Text>
         <SettingItem
@@ -75,22 +75,10 @@ export default function SettingsScreen() {
           route="/dashboard/alerts"
         />
         <SettingItem
-          icon="bar-chart-outline"
-          title="Reports & Data"
-          subtitle="Insights and export readiness"
-          route="/settings/analytics"
-        />
-        <SettingItem
           icon="battery-charging-outline"
           title="Power Management"
-          subtitle="Battery, solar and UPS status"
+          subtitle="Battery and UPS status"
           route="/settings/power"
-        />
-        <SettingItem
-          icon="settings-outline"
-          title="Advanced"
-          subtitle="Firmware and diagnostics"
-          route="/settings/advanced"
         />
 
         <Text className="mb-2 mt-5 text-xs font-bold tracking-wide text-mocha">SESSION</Text>

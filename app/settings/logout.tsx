@@ -1,23 +1,15 @@
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import PageHeader from "../../components/PageHeader";
-import { logout } from "../../constants/sessionStore";
+import { isAuthenticated, logout } from "../../constants/sessionStore";
 
 export default function LogoutScreen() {
   const router = useRouter();
 
   const handleLogout = () => {
-    Alert.alert("End session", "Confirm sign out from this mobile control app?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Sign Out",
-        style: "destructive",
-        onPress: () => {
-          logout();
-          router.replace("/auth/login");
-        },
-      },
-    ]);
+    logout();
+    (router as unknown as { dismissAll?: () => void }).dismissAll?.();
+    router.replace("/auth/login");
   };
 
   return (
@@ -26,7 +18,9 @@ export default function LogoutScreen() {
 
       <View className="mt-4 rounded-2xl border border-sand bg-white p-4">
         <Text className="text-sm text-mocha">
-          Account authentication protects your container setup and control-center operations.
+          {isAuthenticated()
+            ? "Sign out to end this mobile control session."
+            : "No active session. Return to sign in."}
         </Text>
       </View>
 

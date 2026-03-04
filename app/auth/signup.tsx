@@ -1,13 +1,13 @@
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 import {
   addRegistrationContainer,
   beginRegistration,
   getPendingRegistration,
   removeRegistrationContainer,
-  type DeploymentModel,
+  type moduleModel,
 } from "../../constants/sessionStore";
 
 type ValidationState = "idle" | "checking" | "valid" | "invalid";
@@ -16,11 +16,13 @@ export default function SignupSetupScreen() {
   const router = useRouter();
 
   const [setupId, setSetupId] = useState("");
-  const [deploymentModel, setDeploymentModel] = useState<DeploymentModel>("single-container");
+  const [moduleModel, setmoduleModel] =
+    useState<moduleModel>("single-container");
   const [containerIdInput, setContainerIdInput] = useState("");
   const [containerNameInput, setContainerNameInput] = useState("");
   const [error, setError] = useState("");
-  const [validationState, setValidationState] = useState<ValidationState>("idle");
+  const [validationState, setValidationState] =
+    useState<ValidationState>("idle");
   const [validationMessage, setValidationMessage] = useState("");
 
   const pending = getPendingRegistration();
@@ -41,7 +43,7 @@ export default function SignupSetupScreen() {
     setValidationMessage("");
 
     const timer = setTimeout(() => {
-      const result = beginRegistration(deploymentModel, setupId);
+      const result = beginRegistration(moduleModel, setupId);
 
       if (!result.ok) {
         setValidationState("invalid");
@@ -54,11 +56,14 @@ export default function SignupSetupScreen() {
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [setupId, deploymentModel]);
+  }, [setupId, moduleModel]);
 
   const addContainer = () => {
     setError("");
-    const result = addRegistrationContainer(containerIdInput, containerNameInput);
+    const result = addRegistrationContainer(
+      containerIdInput,
+      containerNameInput,
+    );
     if (!result.ok) {
       setError(result.message);
       return;
@@ -82,7 +87,10 @@ export default function SignupSetupScreen() {
       return;
     }
 
-    if (state.deploymentModel === "control-center" && state.containers.length === 0) {
+    if (
+      state.moduleModel === "control-center" &&
+      state.containers.length === 0
+    ) {
       setError("Add at least one container before continuing.");
       return;
     }
@@ -93,9 +101,10 @@ export default function SignupSetupScreen() {
   const checked =
     validationState === "valid" &&
     pending?.setupId === setupId.trim().toUpperCase() &&
-    pending?.deploymentModel === deploymentModel;
+    pending?.moduleModel === moduleModel;
 
-  const setupPlaceholder = deploymentModel === "single-container" ? "CTR-xxxx" : "CTRL-xxxx";
+  const setupPlaceholder =
+    moduleModel === "single-container" ? "CTR-xxxx" : "CTRL-xxxx";
 
   return (
     <SafeAreaView className="flex-1 bg-cream">
@@ -107,39 +116,55 @@ export default function SignupSetupScreen() {
       </View>
       <ScrollView
         className="flex-1 px-6"
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center", paddingBottom: 28 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          paddingBottom: 28,
+        }}
       >
-        <Text className="text-3xl font-black text-cocoa text-center">Register Setup</Text>
+        <Text className="text-3xl font-black text-cocoa text-center">
+          Register Setup
+        </Text>
 
-        <Text className="mt-5 text-sm font-bold text-cocoa text-center">Model</Text>
+        <Text className="mt-5 text-sm font-bold text-cocoa text-center">
+          Model
+        </Text>
         <View className="mt-2">
           <Pressable
             onPress={() => {
-              setDeploymentModel("single-container");
+              setmoduleModel("single-container");
               setError("");
             }}
             className="rounded-2xl border border-sand bg-white p-3"
           >
             <View className="flex-row items-center">
               <View className="mr-3 h-5 w-5 items-center justify-center rounded-full border border-cocoa">
-                {deploymentModel === "single-container" ? <View className="h-2.5 w-2.5 rounded-full bg-cocoa" /> : null}
+                {moduleModel === "single-container" ? (
+                  <View className="h-2.5 w-2.5 rounded-full bg-cocoa" />
+                ) : null}
               </View>
-              <Text className="flex-1 text-center font-semibold text-cocoa">Single Smart Container</Text>
+              <Text className="flex-1 text-center font-semibold text-cocoa">
+                Single Smart Container
+              </Text>
             </View>
           </Pressable>
 
           <Pressable
             onPress={() => {
-              setDeploymentModel("control-center");
+              setmoduleModel("control-center");
               setError("");
             }}
             className="mt-2 rounded-2xl border border-sand bg-white p-3"
           >
             <View className="flex-row items-center">
               <View className="mr-3 h-5 w-5 items-center justify-center rounded-full border border-cocoa">
-                {deploymentModel === "control-center" ? <View className="h-2.5 w-2.5 rounded-full bg-cocoa" /> : null}
+                {moduleModel === "control-center" ? (
+                  <View className="h-2.5 w-2.5 rounded-full bg-cocoa" />
+                ) : null}
               </View>
-              <Text className="flex-1 text-center font-semibold text-cocoa">Multi-Container Control Center</Text>
+              <Text className="flex-1 text-center font-semibold text-cocoa">
+                Multi-Container Control Center
+              </Text>
             </View>
           </Pressable>
         </View>
@@ -153,12 +178,14 @@ export default function SignupSetupScreen() {
           placeholder={setupPlaceholder}
           autoCapitalize="characters"
           className="mt-4 rounded-2xl border border-sand bg-white px-4 py-3 text-center text-cocoa"
-          placeholderTextColor="#A67C63"
+          placeholderTextColor="#6B7280"
         />
 
         {validationState === "checking" ? (
           <View className="mt-3 rounded-xl border border-sand bg-white p-3">
-            <Text className="text-center text-sm text-cocoa">Checking ID...</Text>
+            <Text className="text-center text-sm text-cocoa">
+              Checking ID...
+            </Text>
           </View>
         ) : null}
 
@@ -170,13 +197,17 @@ export default function SignupSetupScreen() {
 
         {validationState === "invalid" ? (
           <View className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3">
-            <Text className="text-center text-sm text-red-700">{validationMessage}</Text>
+            <Text className="text-center text-sm text-red-700">
+              {validationMessage}
+            </Text>
           </View>
         ) : null}
 
-        {checked && deploymentModel === "control-center" ? (
+        {checked && moduleModel === "control-center" ? (
           <View className="mt-4 rounded-2xl border border-sand bg-white p-4">
-            <Text className="text-center text-sm font-bold text-cocoa">Add Containers</Text>
+            <Text className="text-center text-sm font-bold text-cocoa">
+              Add Containers
+            </Text>
 
             <TextInput
               value={containerIdInput}
@@ -184,7 +215,7 @@ export default function SignupSetupScreen() {
               placeholder="CTR-xxxx"
               autoCapitalize="characters"
               className="mt-3 rounded-2xl border border-sand px-4 py-3 text-center text-cocoa"
-              placeholderTextColor="#A67C63"
+              placeholderTextColor="#6B7280"
             />
 
             <TextInput
@@ -192,20 +223,39 @@ export default function SignupSetupScreen() {
               onChangeText={setContainerNameInput}
               placeholder="Optional Name"
               className="mt-2 rounded-2xl border border-sand px-4 py-3 text-center text-cocoa"
-              placeholderTextColor="#A67C63"
+              placeholderTextColor="#6B7280"
             />
 
-            <Pressable onPress={addContainer} className="mt-3 rounded-2xl bg-primary py-3">
-              <Text className="text-center font-bold text-white">+ Add Container</Text>
+            <Pressable
+              onPress={addContainer}
+              className="mt-3 rounded-2xl bg-primary py-3"
+            >
+              <Text className="text-center font-bold text-white">
+                + Add Container
+              </Text>
             </Pressable>
 
             <View className="mt-3">
               {pending?.containers.map((item) => (
-                <View key={item.containerId} className="mb-2 rounded-xl border border-sand bg-cream p-3">
-                  <Text className="text-center font-semibold text-cocoa">{item.containerId}</Text>
-                  <Text className="text-center text-xs text-mocha">{item.nickname || "No name"}</Text>
-                  <Pressable onPress={() => removeRegistrationContainer(item.containerId)} className="mt-2 self-center">
-                    <Text className="text-xs font-semibold text-red-700">Remove</Text>
+                <View
+                  key={item.containerId}
+                  className="mb-2 rounded-xl border border-sand bg-cream p-3"
+                >
+                  <Text className="text-center font-semibold text-cocoa">
+                    {item.containerId}
+                  </Text>
+                  <Text className="text-center text-xs text-mocha">
+                    {item.nickname || "No name"}
+                  </Text>
+                  <Pressable
+                    onPress={() =>
+                      removeRegistrationContainer(item.containerId)
+                    }
+                    className="mt-2 self-center"
+                  >
+                    <Text className="text-xs font-semibold text-red-700">
+                      Remove
+                    </Text>
                   </Pressable>
                 </View>
               ))}
@@ -220,12 +270,18 @@ export default function SignupSetupScreen() {
         ) : null}
 
         <Pressable onPress={next} className="mt-6 rounded-2xl bg-primary py-4">
-          <Text className="text-center text-base font-bold text-white">Next</Text>
+          <Text className="text-center text-base font-bold text-white">
+            Next
+          </Text>
         </Pressable>
 
-        <Pressable onPress={() => router.replace("/auth/login")} className="mt-4">
+        <Pressable
+          onPress={() => router.replace("/auth/login")}
+          className="mt-4"
+        >
           <Text className="text-center text-sm text-mocha">
-            Already registered? <Text className="font-bold text-cocoa">Sign in</Text>
+            Already registered?{" "}
+            <Text className="font-bold text-cocoa">Sign in</Text>
           </Text>
         </Pressable>
       </ScrollView>

@@ -12,11 +12,11 @@ export default function DashboardLayout() {
       screenOptions={{
         headerShown: false,
         animation: "shift",
-        tabBarActiveTintColor: "#4A2E21",
+        tabBarActiveTintColor: "#2C2830",
         tabBarInactiveTintColor: "#9B7C6A",
         tabBarStyle: {
-          backgroundColor: "#F4ECE5",
-          borderTopColor: "#D7C0AF",
+          backgroundColor: "#FFFFFF",
+          borderTopColor: "#E5E7EB",
           height: 66,
           paddingTop: 8,
         },

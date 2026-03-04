@@ -1,16 +1,27 @@
+import { useCallback, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import PageHeader from "../../components/PageHeader";
-
-const systems = [
-  { name: "Battery Level", value: "87%" },
-  { name: "Solar Input", value: "Stable" },
-  { name: "UPS Reserve", value: "68h" },
-];
+import { getPowerStatus, runPowerHealthCheck, type PowerStatus } from "../../constants/appStore";
 
 export default function PowerManagement() {
+  const [status, setStatus] = useState<PowerStatus>(getPowerStatus());
+
+  useFocusEffect(
+    useCallback(() => {
+      runPowerHealthCheck();
+      setStatus(getPowerStatus());
+    }, []),
+  );
+
+  const systems = [
+    { name: "Battery Level", value: `${status.batteryPct}%` },
+    { name: "UPS Reserve", value: `${status.upsReserveHours}h` },
+  ];
+
   return (
     <ScrollView className="flex-1 bg-cream px-5 pt-8" contentContainerStyle={{ paddingBottom: 30 }}>
-      <PageHeader title="Power Management" />
+      <PageHeader title="Power Management" subtitle="Battery and UPS status with in-app power alerts." />
 
       {systems.map((item) => (
         <View

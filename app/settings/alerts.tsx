@@ -41,7 +41,7 @@ export default function AlertPreferences() {
           <Switch
             value={prefs.push}
             onValueChange={(value) => apply({ ...prefs, push: value })}
-            trackColor={{ true: "#7A4A32" }}
+            trackColor={{ true: "#3A3438" }}
           />
         </View>
 
@@ -50,7 +50,7 @@ export default function AlertPreferences() {
           <Switch
             value={prefs.sms}
             onValueChange={(value) => apply({ ...prefs, sms: value })}
-            trackColor={{ true: "#7A4A32" }}
+            trackColor={{ true: "#3A3438" }}
           />
         </View>
 
@@ -59,7 +59,7 @@ export default function AlertPreferences() {
           <Switch
             value={prefs.criticalOnly}
             onValueChange={(value) => apply({ ...prefs, criticalOnly: value })}
-            trackColor={{ true: "#7A4A32" }}
+            trackColor={{ true: "#3A3438" }}
           />
         </View>
       </View>

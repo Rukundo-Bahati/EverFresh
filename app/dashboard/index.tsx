@@ -13,6 +13,7 @@ import {
   getSystemMode,
   getUnreadAlertCount,
   runContainerHealthCheck,
+  runPowerHealthCheck,
 } from "../../constants/appStore";
 
 export default function DashboardHome() {
@@ -31,6 +32,7 @@ export default function DashboardHome() {
 
   const refresh = useCallback(() => {
     runContainerHealthCheck();
+    runPowerHealthCheck();
 
     const containers = getManagedContainers();
     const batches = getBatches();
@@ -85,7 +87,7 @@ export default function DashboardHome() {
             </Text>
 
             <View className="mt-4 flex-row items-center gap-2 rounded-2xl bg-accent px-3 py-2">
-              <Ionicons name="shield-checkmark" size={16} color="#F4ECE5" />
+              <Ionicons name="shield-checkmark" size={16} color="#FFFFFF" />
               <Text className="text-xs font-semibold text-cream">System health score: {healthScore}%</Text>
             </View>
           </View>
@@ -96,7 +98,7 @@ export default function DashboardHome() {
               onPress={() => router.push("/dashboard/alerts")}
               className="flex-row items-center rounded-full border border-sand bg-white px-3 py-2"
             >
-              <Ionicons name="notifications-outline" size={16} color="#4A2E21" />
+              <Ionicons name="notifications-outline" size={16} color="#2C2830" />
               <Text className="ml-2 text-xs font-semibold text-cocoa">{unreadAlerts} unread</Text>
             </Pressable>
           </View>
@@ -129,13 +131,13 @@ export default function DashboardHome() {
               chartConfig={{
                 backgroundGradientFrom: "#FFFFFF",
                 backgroundGradientTo: "#FFFFFF",
-                color: () => "#4A2E21",
-                labelColor: () => "#7A4A32",
+                color: () => "#2C2830",
+                labelColor: () => "#3A3438",
                 decimalPlaces: 1,
                 propsForDots: {
                   r: "4",
                   strokeWidth: "2",
-                  stroke: "#7A4A32",
+                  stroke: "#3A3438",
                 },
               }}
               bezier
@@ -157,13 +159,13 @@ export default function DashboardHome() {
               chartConfig={{
                 backgroundGradientFrom: "#FFFFFF",
                 backgroundGradientTo: "#FFFFFF",
-                color: () => "#7A4A32",
-                labelColor: () => "#7A4A32",
+                color: () => "#3A3438",
+                labelColor: () => "#3A3438",
                 decimalPlaces: 0,
                 propsForDots: {
                   r: "4",
                   strokeWidth: "2",
-                  stroke: "#4A2E21",
+                  stroke: "#2C2830",
                 },
               }}
               bezier

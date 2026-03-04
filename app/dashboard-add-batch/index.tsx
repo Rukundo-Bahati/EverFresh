@@ -87,7 +87,7 @@ export default function AddBatchScreen() {
             <TextInput
               className="rounded-2xl border border-sand px-4 py-3 text-base text-cocoa"
               placeholder="e.g., beans"
-              placeholderTextColor="#A67C63"
+              placeholderTextColor="#6B7280"
               value={productName}
               onChangeText={setProductName}
               returnKeyType="done"
@@ -117,7 +117,7 @@ export default function AddBatchScreen() {
           {draft ? (
             <View className="mt-4 rounded-3xl border border-sand bg-white p-4">
               <View className="mb-3 flex-row items-center">
-                <Ionicons name="sparkles" size={17} color="#7A4A32" />
+                <Ionicons name="sparkles" size={17} color="#3A3438" />
                 <Text className="ml-2 text-sm font-bold text-cocoa">AI-generated details</Text>
               </View>
 

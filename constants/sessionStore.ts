@@ -1,4 +1,4 @@
-export type DeploymentModel = "single-container" | "control-center";
+export type moduleModel = "single-container" | "control-center";
 
 export type ManagedContainerLink = {
   containerId: string;
@@ -8,7 +8,7 @@ export type ManagedContainerLink = {
 export type Account = {
   id: string;
   companyName: string;
-  deploymentModel: DeploymentModel;
+  moduleModel: moduleModel;
   setupId: string;
   role: "Owner" | "Operator";
   managedContainers: ManagedContainerLink[];
@@ -70,7 +70,7 @@ let accounts: Account[] = [
   {
     id: "acc-1",
     companyName: "Client-1001",
-    deploymentModel: "control-center",
+    moduleModel: "control-center",
     setupId: "CTRL-1001",
     role: "Owner",
     managedContainers: [
@@ -82,7 +82,7 @@ let accounts: Account[] = [
   {
     id: "acc-2",
     companyName: "Client-9001",
-    deploymentModel: "single-container",
+    moduleModel: "single-container",
     setupId: "CTR-9001",
     role: "Owner",
     managedContainers: [{ containerId: "CTR-9001", nickname: "Milk Pod 1" }],
@@ -90,7 +90,7 @@ let accounts: Account[] = [
   {
     id: "acc-3",
     companyName: "Client-9002",
-    deploymentModel: "single-container",
+    moduleModel: "single-container",
     setupId: "CTR-9002",
     role: "Owner",
     managedContainers: [{ containerId: "CTR-9002", nickname: "Dry Store 2" }],
@@ -98,7 +98,7 @@ let accounts: Account[] = [
   {
     id: "acc-4",
     companyName: "Client-1002",
-    deploymentModel: "control-center",
+    moduleModel: "control-center",
     setupId: "CTRL-1002",
     role: "Owner",
     managedContainers: [
@@ -110,7 +110,7 @@ let accounts: Account[] = [
   {
     id: "acc-5",
     companyName: "Client-1003",
-    deploymentModel: "control-center",
+    moduleModel: "control-center",
     setupId: "CTRL-1003",
     role: "Owner",
     managedContainers: [
@@ -124,10 +124,12 @@ let accounts: Account[] = [
 
 let currentAccountId: string | null = null;
 
-let pendingLogin: { setupId: string; deploymentModel: DeploymentModel } | null = null;
-let pendingRegistration:
-  | { setupId: string; deploymentModel: DeploymentModel; containers: ManagedContainerLink[] }
-  | null = null;
+let pendingLogin: { setupId: string; moduleModel: moduleModel } | null = null;
+let pendingRegistration: {
+  setupId: string;
+  moduleModel: moduleModel;
+  containers: ManagedContainerLink[];
+} | null = null;
 
 function normalizeId(id: string): string {
   return id.trim().toUpperCase();
@@ -160,11 +162,15 @@ export function getCurrentAccount(): Account | null {
 
 export function beginLogin(
   setupIdInput: string,
-): { ok: true; deploymentModel: DeploymentModel } | { ok: false; message: string } {
+): { ok: true; moduleModel: moduleModel } | { ok: false; message: string } {
   const setupId = normalizeId(setupIdInput);
 
   if (!isContainerIdFormat(setupId) && !isControlCenterIdFormat(setupId)) {
-    return { ok: false, message: "Invalid ID format. Use CTR-xxxx for containers or CTRL-xxxx for control centers." };
+    return {
+      ok: false,
+      message:
+        "Invalid ID format. Use CTR-xxxx for containers or CTRL-xxxx for control centers.",
+    };
   }
 
   const account = accounts.find((item) => item.setupId === setupId);
@@ -180,34 +186,45 @@ export function beginLogin(
     return { ok: false, message: "Setup ID not found." };
   }
 
-  pendingLogin = { setupId, deploymentModel: account.deploymentModel };
-  return { ok: true, deploymentModel: account.deploymentModel };
+  pendingLogin = { setupId, moduleModel: account.moduleModel };
+  return { ok: true, moduleModel: account.moduleModel };
 }
 
 export function getPendingLogin() {
   return pendingLogin;
 }
 
-export function completeLogin(accessCodeInput: string): { ok: true } | { ok: false; message: string } {
+export function completeLogin(
+  accessCodeInput: string,
+): { ok: true } | { ok: false; message: string } {
   if (!pendingLogin) {
     return { ok: false, message: "Setup check is required first." };
   }
 
   const accessCode = accessCodeInput.trim();
 
-  if (pendingLogin.deploymentModel === "single-container") {
-    const adminRecord = adminSingleContainers.find((item) => item.containerId === pendingLogin!.setupId);
+  if (pendingLogin.moduleModel === "single-container") {
+    const adminRecord = adminSingleContainers.find(
+      (item) => item.containerId === pendingLogin!.setupId,
+    );
     if (!adminRecord || adminRecord.accessCode !== accessCode) {
       return { ok: false, message: "Invalid access code for this container." };
     }
   } else {
-    const adminRecord = adminControlSystems.find((item) => item.controlId === pendingLogin!.setupId);
+    const adminRecord = adminControlSystems.find(
+      (item) => item.controlId === pendingLogin!.setupId,
+    );
     if (!adminRecord || adminRecord.accessCode !== accessCode) {
-      return { ok: false, message: "Invalid access code for this control center." };
+      return {
+        ok: false,
+        message: "Invalid access code for this control center.",
+      };
     }
   }
 
-  const account = accounts.find((item) => item.setupId === pendingLogin!.setupId);
+  const account = accounts.find(
+    (item) => item.setupId === pendingLogin!.setupId,
+  );
   if (!account) {
     return { ok: false, message: "Registered setup not found." };
   }
@@ -222,7 +239,7 @@ export function clearPendingLogin(): void {
 }
 
 export function beginRegistration(
-  deploymentModel: DeploymentModel,
+  moduleModel: moduleModel,
   setupIdInput: string,
 ): { ok: true } | { ok: false; message: string } {
   const setupId = normalizeId(setupIdInput);
@@ -231,30 +248,44 @@ export function beginRegistration(
     return { ok: false, message: "This setup is already registered." };
   }
 
-  if (deploymentModel === "single-container") {
+  if (moduleModel === "single-container") {
     if (!isContainerIdFormat(setupId)) {
-      return { ok: false, message: "Invalid container ID format. Expected CTR-xxxx." };
+      return {
+        ok: false,
+        message: "Invalid container ID format. Expected CTR-xxxx.",
+      };
     }
 
-    const container = adminSingleContainers.find((item) => item.containerId === setupId);
+    const container = adminSingleContainers.find(
+      (item) => item.containerId === setupId,
+    );
     if (!container) {
       return { ok: false, message: "Container ID not found." };
     }
 
-    pendingRegistration = { setupId, deploymentModel, containers: [{ containerId: setupId }] };
+    pendingRegistration = {
+      setupId,
+      moduleModel,
+      containers: [{ containerId: setupId }],
+    };
     return { ok: true };
   }
 
   if (!isControlCenterIdFormat(setupId)) {
-    return { ok: false, message: "Invalid control center ID format. Expected CTRL-xxxx." };
+    return {
+      ok: false,
+      message: "Invalid control center ID format. Expected CTRL-xxxx.",
+    };
   }
 
-  const control = adminControlSystems.find((item) => item.controlId === setupId);
+  const control = adminControlSystems.find(
+    (item) => item.controlId === setupId,
+  );
   if (!control) {
     return { ok: false, message: "Control Center ID not found." };
   }
 
-  pendingRegistration = { setupId, deploymentModel, containers: [] };
+  pendingRegistration = { setupId, moduleModel, containers: [] };
   return { ok: true };
 }
 
@@ -266,25 +297,43 @@ export function addRegistrationContainer(
   containerIdInput: string,
   nicknameInput?: string,
 ): { ok: true } | { ok: false; message: string } {
-  if (!pendingRegistration || pendingRegistration.deploymentModel !== "control-center") {
-    return { ok: false, message: "Control-center registration not initialized." };
+  if (
+    !pendingRegistration ||
+    pendingRegistration.moduleModel !== "control-center"
+  ) {
+    return {
+      ok: false,
+      message: "Control-center registration not initialized.",
+    };
   }
 
   const containerId = normalizeId(containerIdInput);
   if (!isContainerIdFormat(containerId)) {
-    return { ok: false, message: "Invalid container ID format. Expected CTR-xxxx." };
+    return {
+      ok: false,
+      message: "Invalid container ID format. Expected CTR-xxxx.",
+    };
   }
 
-  const control = adminControlSystems.find((item) => item.controlId === pendingRegistration!.setupId);
+  const control = adminControlSystems.find(
+    (item) => item.controlId === pendingRegistration!.setupId,
+  );
   if (!control) {
     return { ok: false, message: "Control center not found." };
   }
 
   if (!control.eligibleContainerIds.includes(containerId)) {
-    return { ok: false, message: "Container ID not found for this control center." };
+    return {
+      ok: false,
+      message: "Container ID not found for this control center.",
+    };
   }
 
-  if (pendingRegistration.containers.some((item) => item.containerId === containerId)) {
+  if (
+    pendingRegistration.containers.some(
+      (item) => item.containerId === containerId,
+    )
+  ) {
     return { ok: false, message: "Container already added." };
   }
 
@@ -302,36 +351,53 @@ export function removeRegistrationContainer(containerIdInput: string): void {
   }
 
   const containerId = normalizeId(containerIdInput);
-  pendingRegistration.containers = pendingRegistration.containers.filter((item) => item.containerId !== containerId);
+  pendingRegistration.containers = pendingRegistration.containers.filter(
+    (item) => item.containerId !== containerId,
+  );
 }
 
-export function completeRegistration(accessCodeInput: string): { ok: true } | { ok: false; message: string } {
+export function completeRegistration(
+  accessCodeInput: string,
+): { ok: true } | { ok: false; message: string } {
   if (!pendingRegistration) {
     return { ok: false, message: "Setup check is required first." };
   }
 
   const accessCode = accessCodeInput.trim();
 
-  if (pendingRegistration.deploymentModel === "single-container") {
-    const adminRecord = adminSingleContainers.find((item) => item.containerId === pendingRegistration!.setupId);
+  if (pendingRegistration.moduleModel === "single-container") {
+    const adminRecord = adminSingleContainers.find(
+      (item) => item.containerId === pendingRegistration!.setupId,
+    );
     if (!adminRecord || adminRecord.accessCode !== accessCode) {
-      return { ok: false, message: "Access code does not match records for this container." };
+      return {
+        ok: false,
+        message: "Access code does not match records for this container.",
+      };
     }
   } else {
-    const adminRecord = adminControlSystems.find((item) => item.controlId === pendingRegistration!.setupId);
+    const adminRecord = adminControlSystems.find(
+      (item) => item.controlId === pendingRegistration!.setupId,
+    );
     if (!adminRecord || adminRecord.accessCode !== accessCode) {
-      return { ok: false, message: "Access code does not match records for this control center." };
+      return {
+        ok: false,
+        message: "Access code does not match records for this control center.",
+      };
     }
 
     if (pendingRegistration.containers.length === 0) {
-      return { ok: false, message: "Add at least one container before saving." };
+      return {
+        ok: false,
+        message: "Add at least one container before saving.",
+      };
     }
   }
 
   const newAccount: Account = {
     id: `acc-${Date.now()}`,
     companyName: generateCompanyName(pendingRegistration.setupId),
-    deploymentModel: pendingRegistration.deploymentModel,
+    moduleModel: pendingRegistration.moduleModel,
     setupId: pendingRegistration.setupId,
     role: "Owner",
     managedContainers: [...pendingRegistration.containers],

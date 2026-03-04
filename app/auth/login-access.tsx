@@ -40,7 +40,7 @@ export default function LoginAccessScreen() {
           placeholder="Access Code"
           secureTextEntry
           className="mt-6 text-center rounded-2xl border border-sand bg-white px-4 py-3 text-cocoa"
-          placeholderTextColor="#A67C63"
+          placeholderTextColor="#6B7280"
         />
 
         {error ? (

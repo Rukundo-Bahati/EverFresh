@@ -10,6 +10,11 @@ export type NotificationPreferences = {
   criticalOnly: boolean;
 };
 
+export type PowerStatus = {
+  batteryPct: number;
+  upsReserveHours: number;
+};
+
 export type ContainerUnit = {
   id: string;
   name: string;
@@ -57,6 +62,11 @@ let notificationPreferences: NotificationPreferences = {
   push: true,
   sms: true,
   criticalOnly: false,
+};
+
+let powerStatus: PowerStatus = {
+  batteryPct: 87,
+  upsReserveHours: 68,
 };
 
 const issuedAlertKeys = new Set<string>();
@@ -722,16 +732,13 @@ function seedAlertsIfNeeded() {
 
 export function getSystemMode(): SystemMode {
   const account = getCurrentAccount();
-  return account?.deploymentModel === "single-container"
+  return account?.moduleModel === "single-container"
     ? "single-container"
     : "multi-container";
 }
 
 export function setSystemMode(_: SystemMode): void {
-  createAlert(
-    "Info",
-    "Deployment model is locked to the registered setup type.",
-  );
+  createAlert("Info", "module model is locked to the registered setup type.");
 }
 
 export function getContainers(): ContainerUnit[] {
@@ -819,6 +826,29 @@ export function runContainerHealthCheck(): void {
       );
     }
   });
+}
+
+export function getPowerStatus(): PowerStatus {
+  return { ...powerStatus };
+}
+
+export function runPowerHealthCheck(): void {
+  if (powerStatus.batteryPct <= 15) {
+    createAlert(
+      "Critical",
+      `Power battery is at ${powerStatus.batteryPct}%. Immediate recharge required.`,
+      "power-battery-critical",
+    );
+    return;
+  }
+
+  if (powerStatus.batteryPct <= 30) {
+    createAlert(
+      "Warning",
+      `Power battery is at ${powerStatus.batteryPct}%. Plan recharge soon.`,
+      "power-battery-warning",
+    );
+  }
 }
 
 export function generateBatchDraft(

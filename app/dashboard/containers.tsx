@@ -70,7 +70,7 @@ export default function ContainersScreen() {
             </View>
 
             <View className="mt-3 flex-row items-center">
-              <Ionicons name="time-outline" size={14} color="#7A4A32" />
+              <Ionicons name="time-outline" size={14} color="#3A3438" />
               <Text className="ml-2 text-xs text-accent">Last sync: {container.lastSync}</Text>
             </View>
           </Pressable>

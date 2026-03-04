@@ -5,12 +5,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#4A2E21",
-        accent: "#7A4A32",
-        cocoa: "#2E1D16",
-        cream: "#F4ECE5",
-        sand: "#D7C0AF",
-        mocha: "#A67C63",
+        primary: "#2E252A",
+        accent: "#5B5560",
+        cocoa: "#2C2830",
+        cream: "#FFFFFF",
+        sand: "#ECECEC",
+        mocha: "#7A7480",
       },
     },
   },

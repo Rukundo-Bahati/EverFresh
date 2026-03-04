@@ -13,7 +13,7 @@ export default function PageHeader({ title, subtitle }: PageHeaderProps) {
   return (
     <View className="mb-4 flex-row items-start">
       <Pressable onPress={() => router.back()} className="mr-3 mt-1 rounded-full bg-white p-2">
-        <Ionicons name="chevron-back" size={18} color="#4A2E21" />
+        <Ionicons name="chevron-back" size={18} color="#2C2830" />
       </Pressable>
 
       <View className="flex-1">
